@@ -18,6 +18,16 @@ pipeline {
 
 		
 		}
+	} post {
+		always{
+			echo "i am good always"
+		}
+		success{
+			echo "i work for success"
+		}
+		failure{
+			echo "keep trying"
+		}
 	}
-	}
+}
 	
