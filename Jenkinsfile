@@ -18,7 +18,8 @@ pipeline {
 
 		
 		}
-	} post {
+	} 
+	post {
 		always{
 			echo "i am good always"
 		}
