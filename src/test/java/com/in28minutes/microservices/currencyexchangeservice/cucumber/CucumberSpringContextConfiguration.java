@@ -1,19 +1,21 @@
 package com.in28minutes.microservices.currencyexchangeservice.cucumber;
 
-import org.springframework.boot.test.context.SpringBootContextLoader;
+import io.cucumber.java.Before;
+import io.cucumber.spring.CucumberContextConfiguration;
+
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.test.context.ContextConfiguration;
 
 import com.in28minutes.microservices.currencyexchangeservice.CurrencyExchangeServiceApplicationH2;
 
-import cucumber.api.java.Before;
-
-@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
-@ContextConfiguration(classes = CurrencyExchangeServiceApplicationH2.class, loader = SpringBootContextLoader.class)
+@CucumberContextConfiguration
+@SpringBootTest(
+        classes = CurrencyExchangeServiceApplicationH2.class,
+        webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT
+)
 public class CucumberSpringContextConfiguration {
 
-  @Before
-  public void setUp() {
-  }
+    @Before
+    public void setUp() {
+        // Setup logic if needed
+    }
 }

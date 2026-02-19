@@ -5,6 +5,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,42 +16,46 @@ import com.in28minutes.microservices.currencyexchangeservice.util.environment.In
 @RestController
 public class CurrencyExchangeController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyExchangeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CurrencyExchangeController.class);
 
-	@Autowired
-	private ExchangeValueRepository repository;
+    @Autowired
+    private ExchangeValueRepository repository;
 
-	@Autowired
-	private InstanceInformationService instanceInformationService;
+    @Autowired
+    private InstanceInformationService instanceInformationService;
 
-	@GetMapping("/")
-	public String imHealthy() {
-		return "{healthy:true}";
-	}
+    // Health check endpoint
+    @GetMapping("/")
+    public ResponseEntity<String> imHealthy() {
+        return ResponseEntity.ok("{\"healthy\": true}");
+    }
 
-	//http://localhost:8000/currency-exchange/from/USD/to/INR
-	@GetMapping("/currency-exchange/from/{from}/to/{to}")
-	public ExchangeValue retrieveExchangeValue(@PathVariable String from, @PathVariable String to,
-			@RequestHeader Map<String, String> headers) {
+    // Example: http://localhost:8000/currency-exchange/from/USD/to/INR
+    @GetMapping("/currency-exchange/from/{from}/to/{to}")
+    public ResponseEntity<ExchangeValue> retrieveExchangeValue(
+            @PathVariable("from") String fromCurrency,
+            @PathVariable("to") String toCurrency,
+            @RequestHeader Map<String, String> headers) {
 
-		printAllHeaders(headers);
+        printAllHeaders(headers);
 
-		ExchangeValue exchangeValue = repository.findByFromAndTo(from, to);
+        // Retrieve from database
+        ExchangeValue exchangeValue = repository.findByFromAndTo(fromCurrency, toCurrency);
 
-		LOGGER.info("{} {} {}", from, to, exchangeValue);
+        LOGGER.info("Currency exchange request: {} -> {} | {}", fromCurrency, toCurrency, exchangeValue);
 
-		if (exchangeValue == null) {
-			throw new RuntimeException("Unable to find data to convert " + from + " to " + to);
-		}
+        if (exchangeValue == null) {
+            return ResponseEntity.notFound()
+                    .build();
+        }
 
-		exchangeValue.setExchangeEnvironmentInfo(instanceInformationService.retrieveInstanceInfo());
+        // Add environment info
+        exchangeValue.setExchangeEnvironmentInfo(instanceInformationService.retrieveInstanceInfo());
 
-		return exchangeValue;
-	}
+        return ResponseEntity.ok(exchangeValue);
+    }
 
-	private void printAllHeaders(Map<String, String> headers) {
-		headers.forEach((key, value) -> {
-			LOGGER.info(String.format("Header '%s' = %s", key, value));
-		});
-	}
+    private void printAllHeaders(Map<String, String> headers) {
+        headers.forEach((key, value) -> LOGGER.info("Header '{}' = {}", key, value));
+    }
 }

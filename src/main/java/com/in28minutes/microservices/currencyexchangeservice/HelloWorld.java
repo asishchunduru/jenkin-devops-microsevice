@@ -4,8 +4,10 @@ public class HelloWorld {
 
     public String sayHello(String name) {
 
-        System.out.println("sayHello called with name : " + name);
-        return "Hello " + name;
-    }
+        if (name == null || name.trim().isEmpty()) {
+            return "Hello Guest";
+        }
 
+        return "Hello " + name.trim();
+    }
 }
