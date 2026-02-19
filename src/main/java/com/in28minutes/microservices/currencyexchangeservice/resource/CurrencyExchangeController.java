@@ -40,7 +40,7 @@ public class CurrencyExchangeController {
         printAllHeaders(headers);
 
         // Retrieve from database
-        ExchangeValue exchangeValue = repository.findByFromAndTo(fromCurrency, toCurrency);
+        ExchangeValue exchangeValue = repository.findByFromCurrencyAndToCurrency(from, to);
 
         LOGGER.info("Currency exchange request: {} -> {} | {}", fromCurrency, toCurrency, exchangeValue);
 
