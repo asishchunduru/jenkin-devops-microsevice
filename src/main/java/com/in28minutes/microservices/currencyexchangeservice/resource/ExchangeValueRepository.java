@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExchangeValueRepository extends JpaRepository<ExchangeValue, Long> {
 
-    ExchangeValue findByFromAndTo(String fromCurrency, String toCurrency);
+    // Corrected method names to match entity field names
+    ExchangeValue findByFromCurrencyAndToCurrency(String fromCurrency, String toCurrency);
 
 }
